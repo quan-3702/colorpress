@@ -1,4 +1,4 @@
-const CACHE = 'colorpress-v1';
+const CACHE = 'colorpress-v2';
 const ASSETS = ['./', 'index.html', 'help.html', 'privacy.html', 'style.css', 'app.js', 'worker.js', 'engine.js', 'manifest.json', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'sample-cat.jpg'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
