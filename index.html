@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ColorPress – Photo to Coloring Page Maker</title>
+  <meta name="description" content="Turn your photos into coloring pages and print a whole coloring book – with a drawing AI that runs on your own PC. No upload, no subscription.">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="icon-192.png" alt="" width="30" height="30"><span>ColorPress</span></div>
+    <span id="bookName" class="file-name"></span>
+    <div class="top-btns">
+      <button id="addBtn" class="tb">📷 Add photos</button>
+      <button id="printBtn" class="tb" disabled>🖨 Print</button>
+      <button id="pdfBtn" class="tb" disabled>📄 Save PDF</button>
+      <button id="moreBtn" class="tb">☰ More</button>
+      <button id="proBtn" class="pro-btn" hidden>★ Get Pro</button>
+    </div>
+    <div id="menu" class="menu" hidden>
+      <button id="pngBtn">🖼 Save this page as a picture (PNG)</button>
+      <button id="sampleBtn">✨ Show me an example</button>
+      <button id="clearBtn" class="danger">Start a new book (remove all pages)…</button>
+      <hr>
+      <a href="help.html" target="_blank" rel="noopener">❓ How to use ColorPress</a>
+      <a href="mailto:thequan03072002@gmail.com?subject=ColorPress%20feedback">✉ Feedback &amp; support</a>
+      <a href="https://apps.microsoft.com/detail/9MWSF3JMP1GJ" target="_blank" rel="noopener">More apps: PrintCal photo calendar maker</a>
+      <a href="https://apps.microsoft.com/detail/9N003PBQX6Q0" target="_blank" rel="noopener">More apps: PuzzlePrint word search maker</a>
+    </div>
+    <input id="fileIn" type="file" accept="image/*" multiple hidden>
+  </header>
+
+  <main class="layout">
+    <aside class="left">
+      <section class="tool">
+        <h2>✏️ Drawing</h2>
+        <div class="seg" id="lookSeg">
+          <button data-v="simple">Simple</button><button data-v="classic" class="on">Classic</button><button data-v="detailed">Detailed</button>
+        </div>
+        <p class="hint">Simple = big shapes for little kids · Detailed = more lines for grown-ups.</p>
+        <label class="field">Detail <span id="detailVal" class="muted"></span><input id="detail" type="range" min="0" max="100" value="55"></label>
+        <label class="field">Line thickness <span id="thickVal" class="muted"></span><input id="thick" type="range" min="0" max="100" value="30"></label>
+        <label class="field">Remove small bits <span id="cleanVal" class="muted"></span><input id="clean" type="range" min="0" max="100" value="45"></label>
+        <label class="field">Smooth the photo first <span id="simpVal" class="muted"></span><input id="simp" type="range" min="0" max="100" value="0"></label>
+        <label class="check"><input id="allPages" type="checkbox"> Use these settings for every page</label>
+      </section>
+
+      <section class="tool">
+        <h2>📄 Page</h2>
+        <label class="field">Paper
+          <select id="paper">
+            <option value="letter">US Letter (8.5 × 11 in)</option>
+            <option value="a4">A4 (210 × 297 mm)</option>
+            <option value="kdp">Book for Amazon KDP 8.5 × 11 in – PRO</option>
+            <option value="kdpbleed">KDP 8.5 × 11 in with bleed – PRO</option>
+            <option value="k8x10">Book 8 × 10 in – PRO</option>
+            <option value="k6x9">Book 6 × 9 in – PRO</option>
+          </select>
+        </label>
+        <div class="seg" id="orientSeg"><button data-v="auto" class="on">Auto</button><button data-v="p">Portrait</button><button data-v="l">Landscape</button></div>
+        <label class="field">Words on the page <span class="muted">(optional – hollow letters to colour in)</span><input id="caption" type="text" maxlength="40" placeholder="e.g. Emma's puppy"></label>
+        <label class="check"><input id="frame" type="checkbox" checked> Frame around the picture</label>
+      </section>
+
+      <section class="tool">
+        <h2>📚 Coloring book <span id="pageCount" class="muted"></span></h2>
+        <div id="pages" class="pages"></div>
+        <label class="field">Book title <span class="muted">(cover page)</span><input id="title" type="text" maxlength="40" placeholder="My Coloring Book"></label>
+        <label class="check"><input id="cover" type="checkbox"> Cover page with the title <span class="badge pro-only">PRO</span></label>
+        <label class="check"><input id="nums" type="checkbox"> Page numbers <span class="badge pro-only">PRO</span></label>
+        <label class="check"><input id="backs" type="checkbox"> Blank back of every page (for markers) <span class="badge pro-only">PRO</span></label>
+        <p id="limitHint" class="hint"></p>
+      </section>
+      <p class="promise">🔒 The drawing AI runs on your PC – your photos are never uploaded.<br>💳 Pay once for Pro – no subscription.</p>
+      <p class="fb-note">💬 Something not working the way you want? Tell me – <a href="mailto:thequan03072002@gmail.com?subject=ColorPress%20feedback">thequan03072002@gmail.com</a>. I read every message and improve the app.</p>
+    </aside>
+
+    <section class="stage">
+      <div class="stagebar">
+        <span class="nav"><button id="prevBtn" title="Previous page">‹</button><span id="pageLine" class="muted"></span><button id="nextBtn" title="Next page">›</button></span>
+        <label class="check small"><input id="showPhoto" type="checkbox"> Show the photo next to it</label>
+      </div>
+      <div id="view" class="view">
+        <div id="empty" class="empty">
+          <h1>Turn your photos into coloring pages</h1>
+          <p>Add photos of your family, pets, house or holiday – or drop them here.</p>
+          <div class="row-btns center"><button id="addBig" class="primary big">📷 Add photos</button><button id="sampleBig" class="ghost big">✨ Try an example</button></div>
+          <ul class="promise-list">
+            <li>✏️ A drawing AI turns each photo into clean black lines</li>
+            <li>📚 Put many pages together and print a whole coloring book</li>
+            <li>🖨 Print at home or save a PDF (Amazon KDP sizes in Pro)</li>
+            <li>🔒 Your photos never leave this PC</li>
+          </ul>
+        </div>
+        <div id="sheet" class="sheet" hidden>
+          <div class="sheet-row">
+            <div id="photoBox" class="photo-box" hidden><img id="photoImg" alt="The photo"></div>
+            <div class="paper-wrap"><canvas id="cv"></canvas><div id="wm" class="wm" hidden>PREVIEW</div></div>
+          </div>
+        </div>
+        <div id="busy" class="busy" hidden><div class="busy-card"><b id="busyTitle">Working…</b><div class="bar"><i id="busyBar"></i></div><p id="busyText" class="hint"></p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="proDialog" class="dlg">
+    <h2>ColorPress Pro</h2>
+    <p class="muted">One-time purchase. Yours forever on this Microsoft account. No subscription, ever.</p>
+    <ul class="pro-list">
+      <li><strong>Unlimited pages</strong> in a coloring book – the free version makes books of 3 pages</li>
+      <li><strong>Print quality</strong> – sharp 300 dpi pages (free: 150 dpi)</li>
+      <li><strong>Book sizes for Amazon KDP</strong> – 8.5 × 11 (with or without bleed), 8 × 10, 6 × 9</li>
+      <li><strong>Cover page, page numbers</strong> and blank backs for markers</li>
+    </ul>
+    <p class="fb-note">💬 Something not working the way you want? Tell me – <a href="mailto:thequan03072002@gmail.com?subject=ColorPress%20feedback">thequan03072002@gmail.com</a>. I read every message and improve the app.</p>
+    <p id="proMsg" class="pro-msg" hidden></p>
+    <div class="row-btns">
+      <button id="buyBtn" class="primary" autofocus>Unlock Pro</button>
+      <button id="restoreBtn" class="ghost">Restore purchase</button>
+      <button id="closePro" class="ghost">Not now</button>
+    </div>
+  </dialog>
+  <div id="toast" class="toast" hidden></div>
+  <div id="restartBar" class="restart" hidden>A new version of ColorPress is ready. <button id="restartBtn" class="primary">Restart now</button></div>
+  <div id="printArea"></div>
+  <script src="app.js"></script>
+</body>
+</html>
